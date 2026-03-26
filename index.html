@@ -15,7 +15,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
 .nav-tab{flex:1;padding:14px 6px;text-align:center;font-size:13px;font-weight:500;color:#999;cursor:pointer;border-bottom:2.5px solid transparent;transition:all .3s;background:none;border-top:none;border-left:none;border-right:none}
 .nav-tab.active{color:#07C160;border-bottom-color:#07C160;font-weight:700}
 .nav-tab:hover{color:#07C160}
-.scene{display:none;padding:20px;max-width:440px;margin:0 auto}
+.scene{display:none;padding:20px 20px 10px;max-width:440px;margin:0 auto}
 .scene.active{display:block}
 .scene-title{font-size:18px;font-weight:700;margin-bottom:6px;color:#1a1a1a}
 .scene-desc{font-size:13px;color:#999;margin-bottom:20px;line-height:1.6}
@@ -139,27 +139,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
 .self-only-badge{position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.5);color:rgba(255,255,255,.8);font-size:9px;padding:2px 5px;border-radius:6px;z-index:4}
 
 /* Immersive */
-.story-slides{height:620px;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
+.story-slides{height:700px;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
 .story-slides::-webkit-scrollbar{width:0}
-.story-slide{height:620px;width:100%;position:relative;scroll-snap-align:start;overflow:hidden}
+.story-slide{height:700px;width:100%;position:relative;scroll-snap-align:start;overflow:hidden}
 .story-slide-bg{position:absolute;top:0;left:0;right:0;bottom:0}
 .story-slide-bg img{width:100%;height:100%;object-fit:cover}
-.live-indicator{position:absolute;top:62px;left:16px;display:flex;align-items:center;gap:6px;z-index:25;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);padding:5px 12px;border-radius:16px;cursor:pointer;transition:all .3s}
-.live-indicator:hover{background:rgba(0,0,0,.6)}
-.live-dot{width:8px;height:8px;border-radius:50%;background:#ff3b30;animation:livePulse 1.5s ease infinite}
-@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-.live-text{font-size:11px;color:#fff;font-weight:700;letter-spacing:.5px}
-.live-sound-icon{display:flex;align-items:flex-end;gap:1.5px;height:12px}
-.live-sound-bar{width:2px;background:#fff;border-radius:1px;animation:soundWave .8s ease infinite alternate}
-.live-sound-bar:nth-child(1){height:4px;animation-delay:0s}
-.live-sound-bar:nth-child(2){height:8px;animation-delay:.15s}
-.live-sound-bar:nth-child(3){height:5px;animation-delay:.3s}
-.live-sound-bar:nth-child(4){height:10px;animation-delay:.45s}
-.live-sound-bar:nth-child(5){height:6px;animation-delay:.1s}
-@keyframes soundWave{0%{height:3px}100%{height:12px}}
-.live-sound-bar.paused{animation:none!important;height:4px!important}
 .story-top-gradient{position:absolute;top:0;left:0;right:0;height:120px;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,transparent 100%);z-index:10}
-.story-bottom-gradient{position:absolute;bottom:0;left:0;right:0;height:280px;background:linear-gradient(0deg,rgba(0,0,0,.75) 0%,rgba(0,0,0,.3) 50%,transparent 100%);z-index:10}
+.story-bottom-gradient{position:absolute;bottom:44px;left:0;right:0;height:200px;background:linear-gradient(0deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.2) 50%,transparent 100%);z-index:10}
 .story-top-bar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;padding:8px 16px;z-index:20}
 .story-author-info{display:flex;align-items:center;gap:8px;flex:1}
 .story-author-avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.6)}
@@ -172,19 +158,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
 .story-progress-bar{flex:1;height:2px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden}
 .story-progress-bar.active .progress-fill,.story-progress-bar.done .progress-fill{width:100%}
 .progress-fill{width:0;height:100%;background:#fff;border-radius:2px;transition:width .3s}
-.story-bottom-content{position:absolute;bottom:60px;left:16px;right:60px;z-index:20}
+.story-bottom-content{position:absolute;bottom:52px;left:16px;right:16px;z-index:20}
 .story-content-title{font-size:16px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:6px;text-shadow:0 1px 6px rgba(0,0,0,.4);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .story-content-text{font-size:13px;color:rgba(255,255,255,.85);line-height:1.5;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-shadow:0 1px 4px rgba(0,0,0,.3)}
 .story-countdown-badge{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#07C160,#00e676);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;margin-top:6px;box-shadow:0 2px 8px rgba(7,193,96,.3)}
-.story-right-actions{position:absolute;bottom:80px;right:12px;display:flex;flex-direction:column;gap:20px;align-items:center;z-index:20}
-.story-action-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
-.story-action-icon{font-size:26px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.3))}
-.story-action-count{font-size:11px;color:#fff;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.3)}
-.story-chat-bar{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;display:flex;align-items:center;gap:8px;z-index:30;background:linear-gradient(0deg,rgba(0,0,0,.4) 0%,transparent 100%)}
-.story-chat-input{flex:1;background:rgba(255,255,255,.15);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:10px 16px;font-size:14px;color:#fff;outline:none}
-.story-chat-input::placeholder{color:rgba(255,255,255,.6)}
-.story-chat-actions{display:flex;gap:8px}
-.story-chat-btn{font-size:22px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,.3));background:none;border:none}
+.story-right-actions{display:none}
+.story-chat-bar{position:absolute;bottom:0;left:0;right:0;padding:8px 10px;display:flex;align-items:center;gap:8px;z-index:30;background:rgba(255,255,255,.97);border-top:0.5px solid rgba(0,0,0,.08)}
+.story-chat-input{flex:1;background:#f5f5f5;border:none;border-radius:20px;padding:9px 14px;font-size:14px;color:#333;outline:none;min-width:0}
+.story-chat-input::placeholder{color:#bbb}
+.story-bottom-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.story-bottom-action{display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:0 6px;background:none;border:none}
+.story-bottom-action-icon{font-size:20px;line-height:1}
+.story-bottom-action-count{font-size:10px;color:#666;font-weight:500;margin-top:1px}
 .danmaku-layer{position:absolute;top:80px;left:0;right:0;bottom:200px;z-index:15;pointer-events:none;overflow:hidden}
 .danmaku-item{position:absolute;white-space:nowrap;font-size:13px;font-weight:500;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);padding:4px 12px;background:rgba(0,0,0,.25);border-radius:14px;backdrop-filter:blur(4px);animation:danmakuScroll linear forwards;will-change:transform}
 @keyframes danmakuScroll{0%{transform:translateX(400px)}100%{transform:translateX(-100%)}}
@@ -528,23 +513,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
         <!-- Slide 1: 凌晨三点 LIVE — ciccisong -->
         <div class="story-slide" id="slide-live">
           <div class="story-slide-bg">
-            <img src="https://images.unsplash.com/photo-1499346030926-9a72daac6c63?w=800&h=1200&fit=crop" alt="" id="live-bg-img">
+            <img src="https://images.unsplash.com/photo-1499346030926-9a72daac6c63?w=800&h=1200&fit=crop" alt="">
           </div>
           <div class="emotion-overlay"></div>
           <div class="emotion-text-overlay">
             <div class="emotion-main-text">凌晨三点<br>失眠的人<br>都在想什么</div>
             <div class="emotion-sub-text">— 写给每个深夜还醒着的你</div>
-          </div>
-          <div class="live-indicator" id="live-toggle" onclick="toggleLiveSound()">
-            <div class="live-dot"></div>
-            <span class="live-text">LIVE</span>
-            <div class="live-sound-icon" id="sound-icon">
-              <div class="live-sound-bar paused"></div>
-              <div class="live-sound-bar paused"></div>
-              <div class="live-sound-bar paused"></div>
-              <div class="live-sound-bar paused"></div>
-              <div class="live-sound-bar paused"></div>
-            </div>
           </div>
           <div class="story-top-gradient"></div>
           <div class="story-bottom-gradient"></div>
@@ -572,15 +546,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
             <div class="story-content-title">凌晨三点的天空，失眠的人都在想什么</div>
             <div class="story-content-text">窗外的城市已经安静了，只剩下远处偶尔的车声。睡不着的夜晚，脑子里的念头一个接一个…</div>
           </div>
-          <div class="story-right-actions">
-            <div class="story-action-item"><span class="story-action-icon">❤️</span><span class="story-action-count">892</span></div>
-            <div class="story-action-item"><span class="story-action-icon">💬</span><span class="story-action-count">149</span></div>
-            <div class="story-action-item"><span class="story-action-icon">↗️</span><span class="story-action-count">56</span></div>
-            <div class="story-action-item"><span class="story-action-icon">⭐</span><span class="story-action-count">收藏</span></div>
-          </div>
           <div class="story-chat-bar">
-            <input class="story-chat-input" placeholder="聊一聊..." readonly>
-            <div class="story-chat-actions"><button class="story-chat-btn">😊</button></div>
+            <input class="story-chat-input" placeholder="聊一聊" readonly>
+            <div class="story-bottom-actions">
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">👍</span><span class="story-bottom-action-count">892</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">↗️</span><span class="story-bottom-action-count">56</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">❤️</span><span class="story-bottom-action-count">推荐</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">🗨️</span><span class="story-bottom-action-count">149</span></button>
+            </div>
           </div>
         </div>
 
@@ -615,15 +588,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
             <div class="story-content-title">当你徒步的尽头是一片白沙滩 🏖</div>
             <div class="story-content-text">走了三个小时的山路，翻过最后一个山头，眼前突然出现的蓝让我愣在原地。</div>
           </div>
-          <div class="story-right-actions">
-            <div class="story-action-item"><span class="story-action-icon">❤️</span><span class="story-action-count">1.2k</span></div>
-            <div class="story-action-item"><span class="story-action-icon">💬</span><span class="story-action-count">256</span></div>
-            <div class="story-action-item"><span class="story-action-icon">↗️</span><span class="story-action-count">89</span></div>
-            <div class="story-action-item"><span class="story-action-icon">⭐</span><span class="story-action-count">收藏</span></div>
-          </div>
           <div class="story-chat-bar">
-            <input class="story-chat-input" placeholder="聊一聊..." readonly>
-            <div class="story-chat-actions"><button class="story-chat-btn">😊</button></div>
+            <input class="story-chat-input" placeholder="聊一聊" readonly>
+            <div class="story-bottom-actions">
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">👍</span><span class="story-bottom-action-count">1.2k</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">↗️</span><span class="story-bottom-action-count">89</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">❤️</span><span class="story-bottom-action-count">推荐</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">🗨️</span><span class="story-bottom-action-count">256</span></button>
+            </div>
           </div>
         </div>
 
@@ -658,15 +630,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
             <div class="story-content-title">京都的秋天，每一帧都是壁纸 🍂</div>
             <div class="story-content-text">清水寺的红叶还没完全变红，但已经美到不真实。早上六点到的，整条路只有我一个人。</div>
           </div>
-          <div class="story-right-actions">
-            <div class="story-action-item"><span class="story-action-icon">❤️</span><span class="story-action-count">2.3k</span></div>
-            <div class="story-action-item"><span class="story-action-icon">💬</span><span class="story-action-count">467</span></div>
-            <div class="story-action-item"><span class="story-action-icon">↗️</span><span class="story-action-count">123</span></div>
-            <div class="story-action-item"><span class="story-action-icon">⭐</span><span class="story-action-count">收藏</span></div>
-          </div>
           <div class="story-chat-bar">
-            <input class="story-chat-input" placeholder="聊一聊..." readonly>
-            <div class="story-chat-actions"><button class="story-chat-btn">😊</button></div>
+            <input class="story-chat-input" placeholder="聊一聊" readonly>
+            <div class="story-bottom-actions">
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">👍</span><span class="story-bottom-action-count">2.3k</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">↗️</span><span class="story-bottom-action-count">123</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">❤️</span><span class="story-bottom-action-count">推荐</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">🗨️</span><span class="story-bottom-action-count">467</span></button>
+            </div>
           </div>
         </div>
 
@@ -701,22 +672,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
             <div class="story-content-title">真羡慕广州的网球人 🎾 场地也太好了</div>
             <div class="story-content-text">周末约了朋友打球，场地条件好到离谱。出汗之后的快乐谁懂啊。</div>
           </div>
-          <div class="story-right-actions">
-            <div class="story-action-item"><span class="story-action-icon">❤️</span><span class="story-action-count">3.4k</span></div>
-            <div class="story-action-item"><span class="story-action-icon">💬</span><span class="story-action-count">890</span></div>
-            <div class="story-action-item"><span class="story-action-icon">↗️</span><span class="story-action-count">234</span></div>
-            <div class="story-action-item"><span class="story-action-icon">⭐</span><span class="story-action-count">收藏</span></div>
-          </div>
           <div class="story-chat-bar">
-            <input class="story-chat-input" placeholder="聊一聊..." readonly>
-            <div class="story-chat-actions"><button class="story-chat-btn">😊</button></div>
+            <input class="story-chat-input" placeholder="聊一聊" readonly>
+            <div class="story-bottom-actions">
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">👍</span><span class="story-bottom-action-count">3.4k</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">↗️</span><span class="story-bottom-action-count">234</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">❤️</span><span class="story-bottom-action-count">推荐</span></button>
+              <button class="story-bottom-action"><span class="story-bottom-action-icon">🗨️</span><span class="story-bottom-action-count">890</span></button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div style="text-align:center;margin-top:16px;color:#999;font-size:12px;">
-    👆 在手机画面内上下滑动体验沉浸式浏览 · 点击 LIVE 标签开启/关闭声音
+  <div style="text-align:center;margin-top:10px;color:#999;font-size:12px;padding-bottom:4px;">
+    👆 在手机画面内上下滑动体验沉浸式浏览
   </div>
 </div>
 
@@ -725,10 +695,10 @@ function switchScene(index){
   document.querySelectorAll('.nav-tab').forEach(function(t,i){t.classList.toggle('active',i===index)});
   document.querySelectorAll('.scene').forEach(function(s,i){s.classList.toggle('active',i===index)});
   if(index===2){
-    startDanmaku();animateLivePhoto();
+    startDanmaku();
     var sl=document.getElementById('story-slides');
     if(sl)sl.scrollTop=0;
-  }else{pauseLiveSound()}
+  }
 }
 function switchProfileTab(index){
   var tabs=document.querySelectorAll('.profile-tab');
@@ -737,56 +707,6 @@ function switchProfileTab(index){
   contents.forEach(function(c,i){c.style.display=i===index?'block':'none'});
 }
 document.querySelectorAll('.profile-tab-content').forEach(function(c,i){c.style.display=i===0?'block':'none'});
-
-function animateLivePhoto(){
-  var bgImg=document.getElementById('live-bg-img');
-  if(!bgImg)return;
-  if(window._livePhotoInterval)clearInterval(window._livePhotoInterval);
-  var scale=1,growing=true;
-  window._livePhotoInterval=setInterval(function(){
-    if(growing){scale+=0.0005}else{scale-=0.0005}
-    if(scale>=1.03)growing=false;
-    if(scale<=1)growing=true;
-    bgImg.style.transform='scale('+scale+')';
-    bgImg.style.transition='transform 0.1s ease';
-  },50);
-}
-
-var liveAudioPlaying=false,audioCtx=null,gainNode=null;
-function createAmbientSound(){
-  if(audioCtx)return;
-  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-  gainNode=audioCtx.createGain();
-  gainNode.gain.value=0;
-  gainNode.connect(audioCtx.destination);
-  [130.81,196,261.63,329.63].forEach(function(freq,i){
-    var osc=audioCtx.createOscillator();
-    osc.type=i===0?'triangle':'sine';
-    osc.frequency.value=freq;
-    var oscGain=audioCtx.createGain();
-    oscGain.gain.value=i===0?0.12:0.06;
-    var lfo=audioCtx.createOscillator();
-    lfo.type='sine';lfo.frequency.value=0.2+i*0.05;
-    var lfoGain=audioCtx.createGain();
-    lfoGain.gain.value=3;
-    lfo.connect(lfoGain);lfoGain.connect(osc.frequency);lfo.start();
-    osc.connect(oscGain);oscGain.connect(gainNode);osc.start();
-  });
-}
-function toggleLiveSound(){
-  var bars=document.querySelectorAll('#sound-icon .live-sound-bar');
-  if(!liveAudioPlaying){
-    createAmbientSound();
-    if(gainNode){gainNode.gain.cancelScheduledValues(audioCtx.currentTime);gainNode.gain.linearRampToValueAtTime(0.25,audioCtx.currentTime+0.5)}
-    bars.forEach(function(b){b.classList.remove('paused')});
-    liveAudioPlaying=true;
-  }else{pauseLiveSound()}
-}
-function pauseLiveSound(){
-  if(gainNode&&audioCtx){gainNode.gain.cancelScheduledValues(audioCtx.currentTime);gainNode.gain.linearRampToValueAtTime(0,audioCtx.currentTime+0.3)}
-  document.querySelectorAll('#sound-icon .live-sound-bar').forEach(function(b){b.classList.add('paused')});
-  liveAudioPlaying=false;
-}
 
 var danmakuDataBySlide={
   1:['我也是…三点了还醒着','失眠人狂点头','有些话只能对夜空说','深夜emo选手报到','不要回答，真的好懂','原来不止我一个人','看到这条story破防了','凌晨的月亮替我说了很多','抱抱每个睡不着的人','夜深了 脑子反而更清醒','共鸣了…','想发给那个人看但算了'],
@@ -815,7 +735,7 @@ function startDanmaku(){
   danmakuTimers=[];
   for(var i=1;i<=4;i++){var el=document.getElementById('danmaku-'+i);if(el)el.innerHTML=''}
   var slides=document.getElementById('story-slides');
-  function getCurrentSlide(){return Math.round(slides.scrollTop/620)+1}
+  function getCurrentSlide(){return Math.round(slides.scrollTop/700)+1}
   function launchForCurrent(){var idx=getCurrentSlide();launchDanmaku('danmaku-'+idx,idx)}
   for(var j=0;j<3;j++){(function(jj){setTimeout(function(){launchForCurrent()},jj*600)})(j)}
   var timer=setInterval(function(){launchForCurrent()},2000+Math.random()*1500);
@@ -825,7 +745,7 @@ function startDanmaku(){
 var storySlides=document.getElementById('story-slides');
 if(storySlides){
   storySlides.addEventListener('scroll',function(){
-    var idx=Math.round(storySlides.scrollTop/620);
+    var idx=Math.round(storySlides.scrollTop/700);
     storySlides.querySelectorAll('.story-slide').forEach(function(slide){
       slide.querySelectorAll('.story-progress-bar').forEach(function(bar,j){
         bar.classList.remove('active','done');
@@ -833,21 +753,18 @@ if(storySlides){
         else if(j===idx)bar.classList.add('active');
       });
     });
-    var liveIndicator=document.getElementById('live-toggle');
     var emotionOverlay=document.querySelector('.emotion-overlay');
     var emotionText=document.querySelector('.emotion-text-overlay');
-    if(liveIndicator)liveIndicator.style.display=idx===0?'flex':'none';
     if(emotionOverlay)emotionOverlay.style.display=idx===0?'block':'none';
     if(emotionText)emotionText.style.display=idx===0?'block':'none';
-    if(idx!==0&&liveAudioPlaying)pauseLiveSound();
   });
 }
 
-document.querySelectorAll('.story-action-item').forEach(function(item){
+document.querySelectorAll('.story-bottom-action').forEach(function(item){
   item.addEventListener('click',function(){
-    var icon=this.querySelector('.story-action-icon');
-    if(icon&&icon.textContent==='❤️'){
-      icon.style.transform='scale(1.4)';
+    var icon=this.querySelector('.story-bottom-action-icon');
+    if(icon){
+      icon.style.transform='scale(1.3)';
       icon.style.transition='transform 0.2s';
       setTimeout(function(){icon.style.transform='scale(1)'},200);
     }
