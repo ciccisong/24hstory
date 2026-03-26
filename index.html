@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Story 限时内容 Demo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:#f5f5f5;color:#333;overflow-x:hidden}
+.page-header{background:#fff;color:#333;padding:44px 20px 24px;text-align:center;border-bottom:.5px solid #e8e8e8}
+.page-header h1{font-size:24px;font-weight:800;margin-bottom:6px;color:#1a1a1a}
+.page-header h1 .demo-tag{display:inline-block;background:#07C160;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle;letter-spacing:1px}
+.page-header p{font-size:13px;color:#999}
+.nav-tabs{display:flex;background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.06);position:sticky;top:0;z-index:100}
+.nav-tab{flex:1;padding:14px 6px;text-align:center;font-size:13px;font-weight:500;color:#999;cursor:pointer;border-bottom:2.5px solid transparent;transition:all .3s;background:none;border-top:none;border-left:none;border-right:none}
+.nav-tab.active{color:#07C160;border-bottom-color:#07C160;font-weight:700}
+.nav-tab:hover{color:#07C160}
+.scene{display:none;padding:20px;max-width:440px;margin:0 auto}
+.scene.active{display:block}
+.scene-title{font-size:18px;font-weight:700;margin-bottom:6px;color:#1a1a1a}
+.scene-desc{font-size:13px;color:#999;margin-bottom:20px;line-height:1.6}
+.phone-frame{width:375px;margin:0 auto;background:#fff;border-radius:40px;box-shadow:0 20px 60px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.06);overflow:hidden;border:6px solid #e0e0e0;position:relative}
+.phone-notch{width:126px;height:30px;background:#1a1a1a;border-radius:0 0 20px 20px;margin:0 auto;position:relative;z-index:10}
+.phone-screen{min-height:700px;background:#fff;position:relative;overflow:hidden}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:2px 24px 6px;font-size:12px;font-weight:600;background:#fff;color:#1a1a1a}
+.status-bar .time{font-size:15px;font-weight:700}
+.app-nav{display:flex;align-items:center;padding:10px 16px;background:#fff;border-bottom:.5px solid #eee}
+.app-nav .back{font-size:22px;color:#333;cursor:pointer;width:32px}
+.app-nav .title{flex:1;text-align:center;font-size:17px;font-weight:600;color:#1a1a1a;display:flex;align-items:center;justify-content:center;gap:6px}
+.app-nav .title .nav-demo-tag{background:#07C160;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;letter-spacing:.5px}
+.app-nav .nav-icons{display:flex;gap:16px}
+.app-nav .nav-icon{font-size:20px;color:#333;cursor:pointer}
+.publish-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#fff;border-bottom:.5px solid #eee}
+.publish-bar .hint{font-size:14px;color:#999}
+.publish-bar .publish-btn{color:#07C160;border:none;background:none;font-size:14px;font-weight:600;cursor:pointer}
+.demo-label{position:absolute;top:36px;right:-2px;background:#07C160;color:#fff;font-size:10px;padding:3px 12px 3px 8px;border-radius:6px 0 0 6px;font-weight:700;z-index:50;letter-spacing:1px}
+.screen-scroll{height:620px;overflow-y:auto;padding-bottom:12px;background:#f5f5f5}
+.screen-scroll::-webkit-scrollbar{width:0}
+.waterfall{display:flex;gap:8px;padding:8px}
+.waterfall-col{flex:1;display:flex;flex-direction:column;gap:8px}
+.feed-card{background:#fff;border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .2s}
+.feed-card:active{transform:scale(.97)}
+.feed-card-img{width:100%;position:relative;overflow:hidden}
+.feed-card-img img{width:100%;display:block;object-fit:cover}
+.feed-card-info{padding:10px 10px 12px}
+.feed-card-title{font-size:13px;font-weight:600;color:#333;line-height:1.4;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.feed-card-author{display:flex;align-items:center;gap:6px;margin-top:8px}
+.feed-card-avatar{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;flex-shrink:0;overflow:hidden}
+.feed-card-avatar img{width:100%;height:100%;object-fit:cover}
+.feed-card-name{font-size:11px;color:#999;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.feed-card-discussions{font-size:11px;color:#999;margin-left:auto}
+
+/* Letter card */
+.letter-card{background:#f0f7f0;border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .2s}
+.letter-card:active{transform:scale(.97)}
+.letter-card-body{padding:20px 16px;position:relative;background:repeating-linear-gradient(transparent,transparent 27px,#c5dcc5 27px,#c5dcc5 28px);background-position:0 18px;min-height:240px}
+.letter-card-body::before{content:'';position:absolute;top:10px;right:14px;width:22px;height:22px;background:#b8d4e8;border-radius:50%;opacity:.6}
+.letter-card-body::after{content:'';position:absolute;top:22px;right:30px;width:14px;height:14px;background:#c8b8e8;border-radius:50%;opacity:.5}
+.letter-card-text{font-size:13px;font-weight:600;color:#2a6b5a;line-height:28px;position:relative;z-index:1;padding-top:4px}
+.letter-card-info{padding:10px 16px 12px;background:#f0f7f0;display:flex;align-items:center;gap:8px}
+.letter-card-avatar{width:22px;height:22px;border-radius:50%;overflow:hidden;flex-shrink:0}
+.letter-card-avatar img{width:100%;height:100%;object-fit:cover}
+.letter-card-name{font-size:11px;color:#999}
+.letter-card-discussions{font-size:11px;color:#999;margin-left:auto}
+
+/* Discussion card */
+.discussion-card{background:#fff;border-radius:8px;overflow:hidden;cursor:pointer;padding:12px}
+.discussion-card-title{font-size:13px;font-weight:600;color:#333;margin-bottom:10px;line-height:1.4}
+.discussion-comments{display:flex;flex-direction:column;gap:6px}
+.discussion-comment{padding:8px 10px;border-left:3px solid #07C160;background:#f6faf6;border-radius:0 6px 6px 0;font-size:12px;color:#555;line-height:1.5}
+.discussion-comment.highlight{background:#e8f5e9;color:#333;font-weight:500}
+.discussion-meta{display:flex;align-items:center;gap:6px;margin-top:8px}
+.discussion-avatar{width:18px;height:18px;border-radius:50%;overflow:hidden}
+.discussion-avatar img{width:100%;height:100%;object-fit:cover}
+.discussion-author-name{font-size:11px;color:#999}
+.discussion-friend{font-size:11px;color:#07C160;font-weight:600;margin-left:auto}
+
+/* Quote card */
+.quote-card{background:#fff;border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .2s}
+.quote-card:active{transform:scale(.97)}
+.quote-card-body{padding:30px 20px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px}
+.quote-card-body .red-line{width:60px;height:3px;background:#e74c3c;border-radius:2px;margin-bottom:16px}
+.quote-card-body .quote-title-text{font-size:22px;font-weight:900;color:#1a1a1a;text-align:center;line-height:1.4}
+.quote-card-body .quote-title-text .red{color:#e74c3c}
+.quote-card-body .red-line-bottom{width:60px;height:3px;background:#e74c3c;border-radius:2px;margin-top:16px}
+.quote-card-info{padding:12px 16px 14px}
+.quote-card-title{font-size:13px;color:#555;line-height:1.4;margin-bottom:8px}
+.quote-card-author{display:flex;align-items:center;gap:6px}
+.quote-card-avatar{width:20px;height:20px;border-radius:50%;overflow:hidden}
+.quote-card-avatar img{width:100%;height:100%;object-fit:cover}
+.quote-card-name{font-size:11px;color:#999}
+.quote-card-discussions{font-size:11px;color:#999;margin-left:auto}
+
+/* Story card */
+.story-card{position:relative;border:2px solid transparent;background-clip:padding-box}
+.story-card::before{content:'';position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px;background:linear-gradient(135deg,#07C160,#00e676,#4caf50);border-radius:10px;z-index:-1}
+.story-badge{position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#07C160,#00e676);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;display:flex;align-items:center;gap:3px;z-index:5;box-shadow:0 2px 8px rgba(7,193,96,.3)}
+.story-timer{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;z-index:5;backdrop-filter:blur(4px)}
+.story-ring{position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px;border-radius:10px;background:linear-gradient(135deg,#07C160,#00e676,#4caf50,#07C160);background-size:300% 300%;animation:storyRingGlow 3s ease infinite;z-index:-1}
+@keyframes storyRingGlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+/* Profile */
+.profile-header{background:#fff;padding:20px 16px 0}
+.profile-top-row{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.profile-avatar{width:68px;height:68px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.profile-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-info-right{flex:1}
+.profile-name-row{display:flex;align-items:center;gap:8px}
+.profile-name{font-size:20px;font-weight:700;color:#1a1a1a}
+.profile-badge{font-size:11px;color:#999;background:#f0f0f0;padding:2px 8px;border-radius:4px}
+.profile-publish-btn{margin-left:auto;background:transparent;color:#333;border:1px solid #ddd;padding:6px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer}
+.profile-bio{font-size:13px;color:#999;margin-top:4px}
+.profile-stats{display:flex;justify-content:flex-start;gap:40px;margin-top:16px;padding-bottom:16px;border-bottom:.5px solid #eee}
+.profile-stat{text-align:center}
+.profile-stat-num{font-size:20px;font-weight:800;color:#1a1a1a}
+.profile-stat-label{font-size:12px;color:#999;margin-top:2px}
+.profile-tabs{display:flex;background:#fff;padding:0 16px;gap:24px}
+.profile-tab{padding:14px 0;text-align:center;font-size:15px;color:#999;font-weight:500;cursor:pointer;border-bottom:2.5px solid transparent;transition:all .3s;background:none;border-top:none;border-left:none;border-right:none}
+.profile-tab.active{color:#333;font-weight:700;border-bottom-color:#07C160}
+.profile-content{padding:4px}
+.profile-waterfall{display:flex;gap:6px;padding:6px}
+.profile-waterfall-col{flex:1;display:flex;flex-direction:column;gap:6px}
+.profile-wf-card{background:#fff;border-radius:6px;overflow:hidden;cursor:pointer;transition:transform .2s}
+.profile-wf-card:active{transform:scale(.97)}
+.profile-wf-card img{width:100%;display:block;object-fit:cover}
+.profile-wf-info{padding:8px 8px 10px}
+.profile-wf-title{font-size:12px;font-weight:600;color:#333;line-height:1.4;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.profile-wf-meta{font-size:10px;color:#999;margin-top:6px}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px}
+.profile-grid-item{aspect-ratio:3/4;border-radius:4px;overflow:hidden;position:relative;cursor:pointer}
+.profile-grid-item img{width:100%;height:100%;object-fit:cover;display:block}
+.profile-grid-item .grid-likes{position:absolute;bottom:4px;left:6px;font-size:10px;color:#fff;font-weight:600;display:flex;align-items:center;gap:2px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.story-grid-item{position:relative}
+.story-grid-badge{position:absolute;top:4px;left:4px;background:linear-gradient(135deg,#07C160,#00e676);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px;z-index:2}
+.story-grid-timer{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.5);color:#fff;font-size:9px;padding:2px 5px;border-radius:6px;z-index:2}
+.story-expired-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;border-radius:4px}
+.story-expired-overlay .lock-icon{font-size:24px;margin-bottom:4px}
+.story-expired-overlay .expired-text{font-size:10px;color:rgba(255,255,255,.8);font-weight:600}
+.self-only-badge{position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.5);color:rgba(255,255,255,.8);font-size:9px;padding:2px 5px;border-radius:6px;z-index:4}
+
+/* Immersive */
+.story-slides{height:620px;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
+.story-slides::-webkit-scrollbar{width:0}
+.story-slide{height:620px;width:100%;position:relative;scroll-snap-align:start;overflow:hidden}
+.story-slide-bg{position:absolute;top:0;left:0;right:0;bottom:0}
+.story-slide-bg img{width:100%;height:100%;object-fit:cover}
+.live-indicator{position:absolute;top:62px;left:16px;display:flex;align-items:center;gap:6px;z-index:25;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);padding:5px 12px;border-radius:16px;cursor:pointer;transition:all .3s}
+.live-indicator:hover{background:rgba(0,0,0,.6)}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#ff3b30;animation:livePulse 1.5s ease infinite}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.live-text{font-size:11px;color:#fff;font-weight:700;letter-spacing:.5px}
+.live-sound-icon{display:flex;align-items:flex-end;gap:1.5px;height:12px}
+.live-sound-bar{width:2px;background:#fff;border-radius:1px;animation:soundWave .8s ease infinite alternate}
+.live-sound-bar:nth-child(1){height:4px;animation-delay:0s}
+.live-sound-bar:nth-child(2){height:8px;animation-delay:.15s}
+.live-sound-bar:nth-child(3){height:5px;animation-delay:.3s}
+.live-sound-bar:nth-child(4){height:10px;animation-delay:.45s}
+.live-sound-bar:nth-child(5){height:6px;animation-delay:.1s}
+@keyframes soundWave{0%{height:3px}100%{height:12px}}
+.live-sound-bar.paused{animation:none!important;height:4px!important}
+.story-top-gradient{position:absolute;top:0;left:0;right:0;height:120px;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,transparent 100%);z-index:10}
+.story-bottom-gradient{position:absolute;bottom:0;left:0;right:0;height:280px;background:linear-gradient(0deg,rgba(0,0,0,.75) 0%,rgba(0,0,0,.3) 50%,transparent 100%);z-index:10}
+.story-top-bar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;padding:8px 16px;z-index:20}
+.story-author-info{display:flex;align-items:center;gap:8px;flex:1}
+.story-author-avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.6)}
+.story-author-avatar img{width:100%;height:100%;object-fit:cover}
+.story-author-name{font-size:14px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)}
+.story-author-time{font-size:11px;color:rgba(255,255,255,.7)}
+.story-follow-btn{background:#07C160;color:#fff;border:none;padding:6px 16px;border-radius:16px;font-size:12px;font-weight:700;cursor:pointer}
+.story-close-btn{color:#fff;font-size:24px;cursor:pointer;margin-left:12px;text-shadow:0 1px 4px rgba(0,0,0,.3);background:none;border:none}
+.story-progress{position:absolute;top:52px;left:16px;right:16px;display:flex;gap:3px;z-index:20}
+.story-progress-bar{flex:1;height:2px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden}
+.story-progress-bar.active .progress-fill,.story-progress-bar.done .progress-fill{width:100%}
+.progress-fill{width:0;height:100%;background:#fff;border-radius:2px;transition:width .3s}
+.story-bottom-content{position:absolute;bottom:60px;left:16px;right:60px;z-index:20}
+.story-content-title{font-size:16px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:6px;text-shadow:0 1px 6px rgba(0,0,0,.4);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.story-content-text{font-size:13px;color:rgba(255,255,255,.85);line-height:1.5;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-shadow:0 1px 4px rgba(0,0,0,.3)}
+.story-countdown-badge{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#07C160,#00e676);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;margin-top:6px;box-shadow:0 2px 8px rgba(7,193,96,.3)}
+.story-right-actions{position:absolute;bottom:80px;right:12px;display:flex;flex-direction:column;gap:20px;align-items:center;z-index:20}
+.story-action-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.story-action-icon{font-size:26px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.3))}
+.story-action-count{font-size:11px;color:#fff;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.3)}
+.story-chat-bar{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;display:flex;align-items:center;gap:8px;z-index:30;background:linear-gradient(0deg,rgba(0,0,0,.4) 0%,transparent 100%)}
+.story-chat-input{flex:1;background:rgba(255,255,255,.15);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:10px 16px;font-size:14px;color:#fff;outline:none}
+.story-chat-input::placeholder{color:rgba(255,255,255,.6)}
+.story-chat-actions{display:flex;gap:8px}
+.story-chat-btn{font-size:22px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,.3));background:none;border:none}
+.danmaku-layer{position:absolute;top:80px;left:0;right:0;bottom:200px;z-index:15;pointer-events:none;overflow:hidden}
+.danmaku-item{position:absolute;white-space:nowrap;font-size:13px;font-weight:500;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);padding:4px 12px;background:rgba(0,0,0,.25);border-radius:14px;backdrop-filter:blur(4px);animation:danmakuScroll linear forwards;will-change:transform}
+@keyframes danmakuScroll{0%{transform:translateX(400px)}100%{transform:translateX(-100%)}}
+.phone-screen.immersive{background:#000}
+.phone-screen.immersive .status-bar{background:transparent;color:#fff;position:absolute;z-index:25;width:100%}
+.emotion-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(25,25,112,.3) 0%,rgba(72,61,139,.2) 30%,rgba(0,0,0,0) 60%,rgba(0,0,0,.6) 100%);z-index:2}
+.emotion-text-overlay{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:8;width:80%}
+.emotion-main-text{font-size:28px;font-weight:900;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5);line-height:1.5;letter-spacing:2px}
+.emotion-sub-text{font-size:14px;color:rgba(255,255,255,.7);margin-top:12px;font-weight:400;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>📸 Story 限时内容 <span class="demo-tag">DEMO版</span></h1>
+  <p>24h 可见的沉浸式图文体验</p>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="switchScene(0)">①推荐流</button>
+  <button class="nav-tab" onclick="switchScene(1)">②用户主页</button>
+  <button class="nav-tab" onclick="switchScene(2)">③沉浸式阅读</button>
+</div>
+
+<!-- Scene 1: Feed -->
+<div class="scene active" id="scene-0">
+  <div class="scene-title">场景一：推荐流中的 Story 卡片</div>
+  <div class="scene-desc">白色清爽推荐流，Story 在右列首位，渐变边框+标签+倒计时区分。点击可进入沉浸式阅读。</div>
+
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+      <div class="status-bar">
+        <span class="time">8:13</span>
+        <span>📶 🔋 78%</span>
+      </div>
+      <div class="app-nav">
+        <span class="back">‹</span>
+        <span class="title">问一问 <span class="nav-demo-tag">DEMO版</span></span>
+        <div class="nav-icons">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-icon">👤</span>
+        </div>
+      </div>
+      <div class="publish-bar">
+        <span class="hint" style="color:#666;">分享你的想法、经历或感受</span>
+        <button class="publish-btn">去发布</button>
+      </div>
+
+      <div class="screen-scroll">
+        <div class="waterfall">
+          <!-- 左列 -->
+          <div class="waterfall-col">
+            <!-- 狗狗户外 -->
+            <div class="feed-card">
+              <div class="feed-card-img">
+                <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=500&fit=crop" style="height:200px;" alt="">
+              </div>
+              <div class="feed-card-info">
+                <div class="feed-card-title">在户外，狗生也是旷野</div>
+                <div class="feed-card-author">
+                  <div class="feed-card-avatar">
+                    <img src="https://images.unsplash.com/photo-1535930749574-1399327ce78f?w=80&h=80&fit=crop" alt="">
+                  </div>
+                  <span class="feed-card-name">休伯特漫...</span>
+                  <span class="feed-card-discussions">85讨论</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 春天街拍 -->
+            <div class="feed-card">
+              <div class="feed-card-img">
+                <img src="https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400&h=560&fit=crop" style="height:240px;" alt="">
+              </div>
+              <div class="feed-card-info">
+                <div class="feed-card-title">我在之江路，很想和你交换春天</div>
+                <div class="feed-card-author">
+                  <div class="feed-card-avatar">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop" alt="">
+                  </div>
+                  <span class="feed-card-name">烫书</span>
+                  <span class="feed-card-discussions">27讨论</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 宝宝日记 -->
+            <div class="feed-card">
+              <div class="feed-card-img">
+                <img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?w=400&h=400&fit=crop" style="height:160px;" alt="">
+              </div>
+              <div class="feed-card-info">
+                <div class="feed-card-title">六个月的崽崽第一次坐起来了</div>
+                <div class="feed-card-author">
+                  <div class="feed-card-avatar">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop" alt="">
+                  </div>
+                  <span class="feed-card-name">小圆妈妈</span>
+                  <span class="feed-card-discussions">42讨论</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右列 -->
+          <div class="waterfall-col">
+            <!-- Story卡片：凌晨三点 — 右列第一位 -->
+            <div class="feed-card story-card" onclick="switchScene(2)">
+              <div class="story-ring"></div>
+              <div class="story-badge">📸 Story</div>
+              <div class="story-timer">⏱ 18h</div>
+              <div class="feed-card-img">
+                <img src="https://images.unsplash.com/photo-1499346030926-9a72daac6c63?w=400&h=560&fit=crop" style="height:240px;" alt="">
+              </div>
+              <div class="feed-card-info">
+                <div class="feed-card-title">凌晨三点的天空，失眠的人都在想什么</div>
+                <div class="feed-card-author">
+                  <div class="feed-card-avatar">
+                    <img src="https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=80&h=80&fit=crop" alt="">
+                  </div>
+                  <span class="feed-card-name">ciccisong</span>
+                  <span class="feed-card-discussions">149讨论</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 讨论串 -->
+            <div class="discussion-card">
+              <div class="discussion-card-title">逛博物馆是我旅行的独家治愈秘方</div>
+              <div class="discussion-comments">
+                <div class="discussion-comment highlight">每次看到文物就觉得，人类的故事太精彩了</div>
+                <div class="discussion-comment">三星堆的面具直接给我看呆了</div>
+                <div class="discussion-comment">博物馆永远能治愈我的精神内耗</div>
+              </div>
+              <div class="discussion-meta">
+                <div class="discussion-avatar">
+                  <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop" alt="">
+                </div>
+                <span class="discussion-author-name">清清...</span>
+                <span class="discussion-friend">3个朋友看过</span>
+              </div>
+            </div>
+
+            <!-- 游戏攻略卡 -->
+            <div class="feed-card">
+              <div class="feed-card-img">
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=400&fit=crop" style="height:180px;" alt="">
+              </div>
+              <div class="feed-card-info">
+                <div class="feed-card-title">原神5.0须弥全任务攻略整理</div>
+                <div class="feed-card-author">
+                  <div class="feed-card-avatar">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop" alt="">
+                  </div>
+                  <span class="feed-card-name">文犍</span>
+                  <span class="feed-card-discussions">7讨论</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 引用卡 -->
+            <div class="quote-card">
+              <div class="quote-card-body">
+                <div class="red-line"></div>
+                <div class="quote-title-text">打工人的<span class="red">早餐</span>自由有多难？</div>
+                <div class="red-line-bottom"></div>
+              </div>
+              <div class="quote-card-info">
+                <div class="quote-card-title">月薪一万在一线城市，早餐自由真的很难吗？</div>
+                <div class="quote-card-author">
+                  <div class="quote-card-avatar">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop" alt="">
+                  </div>
+                  <span class="quote-card-name">泽问科技</span>
+                  <span class="quote-card-discussions">38讨论</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scene 2: User Profile -->
+<div class="scene" id="scene-1">
+  <div class="scene-title">场景二：用户主页 — 普通内容 & Story 流</div>
+  <div class="scene-desc">主页分为「发布」「讨论」和「Story」三个 Tab。过期 24h 的 Story 会显示锁定状态，仅自己可见。</div>
+
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="demo-label">DEMO</div>
+    <div class="phone-screen">
+      <div class="status-bar">
+        <span class="time">12:37</span>
+        <span>📶 🔋 78%</span>
+      </div>
+      <div class="app-nav">
+        <span class="back">‹</span>
+        <span class="title">问一问</span>
+        <div class="nav-icons">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-icon">···</span>
+        </div>
+      </div>
+
+      <div class="screen-scroll" id="profile-scroll" style="background:#fff;">
+        <div class="profile-header">
+          <div class="profile-top-row">
+            <div class="profile-avatar">
+              <img src="https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=150&h=150&fit=crop" alt="">
+            </div>
+            <div class="profile-info-right">
+              <div class="profile-name-row">
+                <div class="profile-name">ciccisong</div>
+                <span class="profile-badge">视频号</span>
+                <button class="profile-publish-btn">去发布</button>
+              </div>
+              <div class="profile-bio">不要回答</div>
+            </div>
+          </div>
+          <div class="profile-stats">
+            <div class="profile-stat"><div class="profile-stat-num">39</div><div class="profile-stat-label">发布</div></div>
+            <div class="profile-stat"><div class="profile-stat-num">149</div><div class="profile-stat-label">讨论</div></div>
+            <div class="profile-stat"><div class="profile-stat-num">2492</div><div class="profile-stat-label">获赞</div></div>
+          </div>
+        </div>
+
+        <div class="profile-tabs">
+          <button class="profile-tab active" onclick="switchProfileTab(0)">发布</button>
+          <button class="profile-tab" onclick="switchProfileTab(1)">讨论</button>
+          <button class="profile-tab" onclick="switchProfileTab(2)">📸 Story</button>
+        </div>
+
+        <div class="profile-content profile-tab-content active" id="profile-notes">
+          <div class="profile-waterfall">
+            <div class="profile-waterfall-col">
+              <div class="profile-wf-card">
+                <img src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400&h=500&fit=crop" style="height:200px;" alt="">
+                <div class="profile-wf-info">
+                  <div class="profile-wf-title">真羡慕广州的网球人🎾</div>
+                  <div class="profile-wf-meta">6058 曝光 · 2 讨论 · 40 赞</div>
+                </div>
+              </div>
+              <div class="profile-wf-card">
+                <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=350&fit=crop" style="height:160px;" alt="">
+                <div class="profile-wf-info">
+                  <div class="profile-wf-title">这个季节过敏星人必备清单</div>
+                  <div class="profile-wf-meta">3241 曝光 · 5 讨论 · 89 赞</div>
+                </div>
+              </div>
+            </div>
+            <div class="profile-waterfall-col">
+              <div class="profile-wf-card">
+                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=520&fit=crop" style="height:230px;" alt="">
+                <div class="profile-wf-info">
+                  <div class="profile-wf-title">当你徒步的尽头是一片白沙滩</div>
+                  <div class="profile-wf-meta">1.1万 曝光 · 7 讨论 · 131 赞</div>
+                </div>
+              </div>
+              <div class="profile-wf-card">
+                <img src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=400&h=400&fit=crop" style="height:180px;" alt="">
+                <div class="profile-wf-info">
+                  <div class="profile-wf-title">京都的秋天，每一帧都是壁纸</div>
+                  <div class="profile-wf-meta">8924 曝光 · 12 讨论 · 267 赞</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-content profile-tab-content" id="profile-discussions">
+          <div style="text-align:center;padding:60px 20px;color:#999;">
+            <div style="font-size:40px;margin-bottom:12px;opacity:.5;">💬</div>
+            <div style="font-size:14px;">参与的讨论</div>
+          </div>
+        </div>
+
+        <div class="profile-content profile-tab-content" id="profile-stories">
+          <div style="padding:8px 4px 12px;font-size:12px;color:#999;display:flex;align-items:center;gap:4px;">
+            <span style="color:#07C160;">●</span> 有效 Story 对所有人可见，过期 Story 仅自己可见
+          </div>
+          <div class="profile-grid">
+            <div class="profile-grid-item story-grid-item" onclick="switchScene(2)">
+              <div class="story-grid-badge">📸 Story</div>
+              <div class="story-grid-timer">18h</div>
+              <img src="https://images.unsplash.com/photo-1499346030926-9a72daac6c63?w=300&h=400&fit=crop" alt="">
+              <div class="grid-likes">❤️ 892</div>
+            </div>
+            <div class="profile-grid-item story-grid-item" onclick="switchScene(2)">
+              <div class="story-grid-badge">📸 Story</div>
+              <div class="story-grid-timer">6h</div>
+              <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&h=400&fit=crop" alt="">
+              <div class="grid-likes">❤️ 1.2k</div>
+            </div>
+            <div class="profile-grid-item story-grid-item" onclick="switchScene(2)">
+              <div class="story-grid-badge">📸 Story</div>
+              <div class="story-grid-timer">2h</div>
+              <img src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=300&h=400&fit=crop" alt="">
+              <div class="grid-likes">❤️ 456</div>
+            </div>
+            <div class="profile-grid-item story-grid-item">
+              <img src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=300&h=400&fit=crop" alt="" style="filter:grayscale(100%) brightness(.6);">
+              <div class="story-expired-overlay"><span class="lock-icon">🔒</span><span class="expired-text">已过期</span></div>
+              <div class="self-only-badge">👁 仅自己</div>
+            </div>
+            <div class="profile-grid-item story-grid-item">
+              <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=400&fit=crop" alt="" style="filter:grayscale(100%) brightness(.6);">
+              <div class="story-expired-overlay"><span class="lock-icon">🔒</span><span class="expired-text">已过期</span></div>
+              <div class="self-only-badge">👁 仅自己</div>
+            </div>
+            <div class="profile-grid-item story-grid-item">
+              <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=400&fit=crop" alt="" style="filter:grayscale(100%) brightness(.6);">
+              <div class="story-expired-overlay"><span class="lock-icon">🔒</span><span class="expired-text">已过期</span></div>
+              <div class="self-only-badge">👁 仅自己</div>
+            </div>
+          </div>
+        </div>
+        <div style="height:40px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scene 3: Immersive (多作者) -->
+<div class="scene" id="scene-2">
+  <div class="scene-title">场景三：沉浸式 Story 阅读</div>
+  <div class="scene-desc">全屏图片单列流，上下滑动切换。多位作者的 Story 混排，弹幕与当前内容匹配。</div>
+
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="phone-screen immersive">
+      <div class="status-bar" style="color:white;">
+        <span class="time">12:38</span>
+        <span>📶 🔋 76%</span>
+      </div>
+
+      <div class="story-slides" id="story-slides">
+        <!-- Slide 1: 凌晨三点 LIVE — ciccisong -->
+        <div class="story-slide" id="slide-live">
+          <div class="story-slide-bg">
+            <img src="https://images.unsplash.com/photo-1499346030926-9a72daac6c63?w=800&h=1200&fit=crop" alt="" id="live-bg-img">
+          </div>
+          <div class="emotion-overlay"></div>
+          <div class="emotion-text-overlay">
+            <div class="emotion-main-text">凌晨三点<br>失眠的人<br>都在想什么</div>
+            <div class="emotion-sub-text">— 写给每个深夜还醒着的你</div>
+          </div>
+          <div class="live-indicator" id="live-toggle" onclick="toggleLiveSound()">
+            <div class="live-dot"></div>
+            <span class="live-text">LIVE</span>
+            <div class="live-sound-icon" id="sound-icon">
+              <div class="live-sound-bar paused"></div>
+              <div class="live-sound-bar paused"></div>
+              <div class="live-sound-bar paused"></div>
+              <div class="live-sound-bar paused"></div>
+              <div class="live-sound-bar paused"></div>
+            </div>
+          </div>
+          <div class="story-top-gradient"></div>
+          <div class="story-bottom-gradient"></div>
+          <div class="story-top-bar">
+            <div class="story-author-info">
+              <div class="story-author-avatar">
+                <img src="https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=80&h=80&fit=crop" alt="">
+              </div>
+              <div>
+                <div class="story-author-name">ciccisong</div>
+                <div class="story-author-time">18小时前</div>
+              </div>
+            </div>
+            <button class="story-follow-btn">+ 关注</button>
+            <button class="story-close-btn" onclick="switchScene(0)">✕</button>
+          </div>
+          <div class="story-progress">
+            <div class="story-progress-bar active"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="story-progress-bar"><div class="progress-fill"></div></div>
+            <div class="story-progress-bar"><div class="progress-fill"></div></div>
+            <div class="story-progress-bar"><div class="progress-fill"></div></div>
+          </div>
+          <div class="danmaku-layer" id="danmaku-1"></div>
+          <div class="story-bottom-content">
+            <div class="story-content-title">凌晨三点的天空，失眠的人都在想什么</div>
+            <div class="story-content-text">窗外的城市已经安静了，只剩下远处偶尔的车声。睡不着的夜晚，脑子里的念头一个接一个…</div>
+          </div>
+          <div class="story-right-actions">
+            <div class="story-action-item"><span class="story-action-icon">❤️</span><span class="story-action-count">892</span></div>
+            <div class="story-action-item"><span class="story-action-icon">💬</span><span class="story-action-count">149</span></div>
+            <div class="story-action-item"><span class="story-action-icon">↗️</span><span class="story-action-count">56</span></div>
+            <div class="story-action-item"><span class="story-action-icon">⭐</span><span class="story-action-count">收藏</span></div>
+          </div>
+          <div class="story-chat-bar">
+            <input class="story-chat-input" placeholder="聊一聊..." readonly>
+            <div class="story-chat-actions"><button class="story-chat-btn">😊</button></div>
+          </div>
+        </div>
+
+        <!-- Slide 2: 海滩 — lucky徐多多 -->
+        <div class="story-slide">
+          <div class="story-slide-bg">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=1200&fit=crop" alt="">
+          </div>
+          <div class="story-top-gradient"></div>
+          <div class="story-bottom-gradient"></div>
+          <div class="story-top-bar">
+            <div class="story-author-info">
+              <div class="story-author-avatar">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop" alt="">
+              </div>
+              <div>
+                <div class="story-author-name">lucky徐多多</div>
+                <div class="story-author-time">3小时前</div>
+              </div>
+            </div>
+            <button class="story-follow-btn">+ 关注</button>
+            <button class="story-close-btn" onclick="switchScene(0)">✕</button>
+          </div>
+          <div class="story-progress">
+            <div class="story-progress-bar done"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="story-progress-bar active"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="story-progress-bar"><div class="progress-fill"></div></div>
+            <div class="story-progress-bar"><div class="progress-fill"></div></div>
+          </div>
+          <div class="danmaku-layer" id="danmaku-2"></div>
+          <div class="story-bottom-content">
+            <div class="story-content-title">当你徒步的尽头是一片白沙滩 🏖</div>
+            <div class="story-content-text">走了三个小时的山路，翻过最后一个山头，眼前突然出现的蓝让我愣在原地。</div>
+          </div>
+          <div class="story-right-actions">
+            <div class="story-action-item"><span class="story-action-icon">❤️</span><span class="story-action-count">1.2k</span></div>
+            <div class="story-action-item"><span class="story-action-icon">💬</span><span class="story-action-count">256</span></div>
+            <div class="story-action-item"><span class="story-action-icon">↗️</span><span class="story-action-count">89</span></div>
+            <div class="story-action-item"><span class="story-action-icon">⭐</span><span class="story-action-count">收藏</span></div>
+          </div>
+          <div class="story-chat-bar">
+            <input class="story-chat-input" placeholder="聊一聊..." readonly>
+            <div class="story-chat-actions"><button class="story-chat-btn">😊</button></div>
+          </div>
+        </div>
+
+        <!-- Slide 3: 京都 — 王森 -->
+        <div class="story-slide">
+          <div class="story-slide-bg">
+            <img src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=800&h=1200&fit=crop" alt="">
+          </div>
+          <div class="story-top-gradient"></div>
+          <div class="story-bottom-gradient"></div>
+          <div class="story-top-bar">
+            <div class="story-author-info">
+              <div class="story-author-avatar">
+                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&h=80&fit=crop" alt="">
+              </div>
+              <div>
+                <div class="story-author-name">王森</div>
+                <div class="story-author-time">12小时前</div>
+              </div>
+            </div>
+            <button class="story-follow-btn">已关注</button>
+            <button class="story-close-btn" onclick="switchScene(0)">✕</button>
+          </div>
+          <div class="story-progress">
+            <div class="story-progress-bar done"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="story-progress-bar done"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="story-progress-bar active"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="story-progress-bar"><div class="progress-fill"></div></div>
+          </div>
+          <div class="danmaku-layer" id="danmaku-3"></div>
+          <div class="story-bottom-content">
+            <div class="story-content-title">京都的秋天，每一帧都是壁纸 🍂</div>
+            <div class="story-content-text">清水寺的红叶还没完全变红，但已经美到不真实。早上六点到的，整条路只有我一个人。</div>
+          </div>
+          <div class="story-right-actions">
+            <div class="story-action-item"><span class="story-action-icon">❤️</span><span class="story-action-count">2.3k</span></div>
+            <div class="story-action-item"><span class="story-action-icon">💬</span><span class="story-action-count">467</span></div>
+            <div class="story-action-item"><span class="story-action-icon">↗️</span><span class="story-action-count">123</span></div>
+            <div class="story-action-item"><span class="story-action-icon">⭐</span><span class="story-action-count">收藏</span></div>
+          </div>
+          <div class="story-chat-bar">
+            <input class="story-chat-input" placeholder="聊一聊..." readonly>
+            <div class="story-chat-actions"><button class="story-chat-btn">😊</button></div>
+          </div>
+        </div>
+
+        <!-- Slide 4: 网球 — 大黄皇 -->
+        <div class="story-slide">
+          <div class="story-slide-bg">
+            <img src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800&h=1200&fit=crop" alt="">
+          </div>
+          <div class="story-top-gradient"></div>
+          <div class="story-bottom-gradient"></div>
+          <div class="story-top-bar">
+            <div class="story-author-info">
+              <div class="story-author-avatar">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop" alt="">
+              </div>
+              <div>
+                <div class="story-author-name">大黄皇</div>
+                <div class="story-author-time">2小时前</div>
+              </div>
+            </div>
+            <button class="story-follow-btn">+ 关注</button>
+            <button class="story-close-btn" onclick="switchScene(0)">✕</button>
+          </div>
+          <div class="story-progress">
+            <div class="story-progress-bar done"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="story-progress-bar done"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="story-progress-bar done"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="story-progress-bar active"><div class="progress-fill" style="width:100%"></div></div>
+          </div>
+          <div class="danmaku-layer" id="danmaku-4"></div>
+          <div class="story-bottom-content">
+            <div class="story-content-title">真羡慕广州的网球人 🎾 场地也太好了</div>
+            <div class="story-content-text">周末约了朋友打球，场地条件好到离谱。出汗之后的快乐谁懂啊。</div>
+          </div>
+          <div class="story-right-actions">
+            <div class="story-action-item"><span class="story-action-icon">❤️</span><span class="story-action-count">3.4k</span></div>
+            <div class="story-action-item"><span class="story-action-icon">💬</span><span class="story-action-count">890</span></div>
+            <div class="story-action-item"><span class="story-action-icon">↗️</span><span class="story-action-count">234</span></div>
+            <div class="story-action-item"><span class="story-action-icon">⭐</span><span class="story-action-count">收藏</span></div>
+          </div>
+          <div class="story-chat-bar">
+            <input class="story-chat-input" placeholder="聊一聊..." readonly>
+            <div class="story-chat-actions"><button class="story-chat-btn">😊</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:16px;color:#999;font-size:12px;">
+    👆 在手机画面内上下滑动体验沉浸式浏览 · 点击 LIVE 标签开启/关闭声音
+  </div>
+</div>
+
+<script>
+function switchScene(index){
+  document.querySelectorAll('.nav-tab').forEach(function(t,i){t.classList.toggle('active',i===index)});
+  document.querySelectorAll('.scene').forEach(function(s,i){s.classList.toggle('active',i===index)});
+  if(index===2){
+    startDanmaku();animateLivePhoto();
+    var sl=document.getElementById('story-slides');
+    if(sl)sl.scrollTop=0;
+  }else{pauseLiveSound()}
+}
+function switchProfileTab(index){
+  var tabs=document.querySelectorAll('.profile-tab');
+  var contents=document.querySelectorAll('.profile-tab-content');
+  tabs.forEach(function(t,i){t.classList.toggle('active',i===index)});
+  contents.forEach(function(c,i){c.style.display=i===index?'block':'none'});
+}
+document.querySelectorAll('.profile-tab-content').forEach(function(c,i){c.style.display=i===0?'block':'none'});
+
+function animateLivePhoto(){
+  var bgImg=document.getElementById('live-bg-img');
+  if(!bgImg)return;
+  if(window._livePhotoInterval)clearInterval(window._livePhotoInterval);
+  var scale=1,growing=true;
+  window._livePhotoInterval=setInterval(function(){
+    if(growing){scale+=0.0005}else{scale-=0.0005}
+    if(scale>=1.03)growing=false;
+    if(scale<=1)growing=true;
+    bgImg.style.transform='scale('+scale+')';
+    bgImg.style.transition='transform 0.1s ease';
+  },50);
+}
+
+var liveAudioPlaying=false,audioCtx=null,gainNode=null;
+function createAmbientSound(){
+  if(audioCtx)return;
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  gainNode=audioCtx.createGain();
+  gainNode.gain.value=0;
+  gainNode.connect(audioCtx.destination);
+  [130.81,196,261.63,329.63].forEach(function(freq,i){
+    var osc=audioCtx.createOscillator();
+    osc.type=i===0?'triangle':'sine';
+    osc.frequency.value=freq;
+    var oscGain=audioCtx.createGain();
+    oscGain.gain.value=i===0?0.12:0.06;
+    var lfo=audioCtx.createOscillator();
+    lfo.type='sine';lfo.frequency.value=0.2+i*0.05;
+    var lfoGain=audioCtx.createGain();
+    lfoGain.gain.value=3;
+    lfo.connect(lfoGain);lfoGain.connect(osc.frequency);lfo.start();
+    osc.connect(oscGain);oscGain.connect(gainNode);osc.start();
+  });
+}
+function toggleLiveSound(){
+  var bars=document.querySelectorAll('#sound-icon .live-sound-bar');
+  if(!liveAudioPlaying){
+    createAmbientSound();
+    if(gainNode){gainNode.gain.cancelScheduledValues(audioCtx.currentTime);gainNode.gain.linearRampToValueAtTime(0.25,audioCtx.currentTime+0.5)}
+    bars.forEach(function(b){b.classList.remove('paused')});
+    liveAudioPlaying=true;
+  }else{pauseLiveSound()}
+}
+function pauseLiveSound(){
+  if(gainNode&&audioCtx){gainNode.gain.cancelScheduledValues(audioCtx.currentTime);gainNode.gain.linearRampToValueAtTime(0,audioCtx.currentTime+0.3)}
+  document.querySelectorAll('#sound-icon .live-sound-bar').forEach(function(b){b.classList.add('paused')});
+  liveAudioPlaying=false;
+}
+
+var danmakuDataBySlide={
+  1:['我也是…三点了还醒着','失眠人狂点头','有些话只能对夜空说','深夜emo选手报到','不要回答，真的好懂','原来不止我一个人','看到这条story破防了','凌晨的月亮替我说了很多','抱抱每个睡不着的人','夜深了 脑子反而更清醒','共鸣了…','想发给那个人看但算了'],
+  2:['天啊也太美了吧！！','这水蓝得不真实','三小时值了值了','下次带我一个！','想去想去想去','广东附近的吗？求坐标','同款体验 翻过山看到海的感觉','收藏了 周末就出发','徒步人的终极梦想','人间值得系列','好治愈啊','想辞职去旅行系列'],
+  3:['太绝了这个红叶！','六点起床你是狠人','清水寺永远的神','京都是我去过最美的地方','每一帧真的都是壁纸','已截图设壁纸了','秋天的日本太犯规了','什么时候去的？机票多少','美到窒息','想去想去想去 x100','这个光线 绝了','被种草了 明年秋天安排'],
+  4:['广州网球人太幸福了','场地条件确实好','出汗之后的快乐我懂！','约球约球！','哪个球场 求分享','运动真的太解压了','看完也想去打球了','羡慕南方人的运动天气','周末一起啊！','网球入门推荐吗','这个场地绝了','运动多巴胺 真实']
+};
+var danmakuTimers=[];
+function launchDanmaku(containerId,slideIdx){
+  var container=document.getElementById(containerId);
+  if(!container)return;
+  var pool=danmakuDataBySlide[slideIdx]||danmakuDataBySlide[1];
+  var text=pool[Math.floor(Math.random()*pool.length)];
+  var item=document.createElement('div');
+  item.className='danmaku-item';
+  item.textContent=text;
+  var lane=Math.floor(Math.random()*5);
+  item.style.top=(8+lane*18)+'%';
+  var duration=8+Math.random()*6;
+  item.style.animationDuration=duration+'s';
+  container.appendChild(item);
+  setTimeout(function(){if(item.parentNode)item.parentNode.removeChild(item)},duration*1000+500);
+}
+function startDanmaku(){
+  danmakuTimers.forEach(function(t){clearInterval(t)});
+  danmakuTimers=[];
+  for(var i=1;i<=4;i++){var el=document.getElementById('danmaku-'+i);if(el)el.innerHTML=''}
+  var slides=document.getElementById('story-slides');
+  function getCurrentSlide(){return Math.round(slides.scrollTop/620)+1}
+  function launchForCurrent(){var idx=getCurrentSlide();launchDanmaku('danmaku-'+idx,idx)}
+  for(var j=0;j<3;j++){(function(jj){setTimeout(function(){launchForCurrent()},jj*600)})(j)}
+  var timer=setInterval(function(){launchForCurrent()},2000+Math.random()*1500);
+  danmakuTimers.push(timer);
+}
+
+var storySlides=document.getElementById('story-slides');
+if(storySlides){
+  storySlides.addEventListener('scroll',function(){
+    var idx=Math.round(storySlides.scrollTop/620);
+    storySlides.querySelectorAll('.story-slide').forEach(function(slide){
+      slide.querySelectorAll('.story-progress-bar').forEach(function(bar,j){
+        bar.classList.remove('active','done');
+        if(j<idx)bar.classList.add('done');
+        else if(j===idx)bar.classList.add('active');
+      });
+    });
+    var liveIndicator=document.getElementById('live-toggle');
+    var emotionOverlay=document.querySelector('.emotion-overlay');
+    var emotionText=document.querySelector('.emotion-text-overlay');
+    if(liveIndicator)liveIndicator.style.display=idx===0?'flex':'none';
+    if(emotionOverlay)emotionOverlay.style.display=idx===0?'block':'none';
+    if(emotionText)emotionText.style.display=idx===0?'block':'none';
+    if(idx!==0&&liveAudioPlaying)pauseLiveSound();
+  });
+}
+
+document.querySelectorAll('.story-action-item').forEach(function(item){
+  item.addEventListener('click',function(){
+    var icon=this.querySelector('.story-action-icon');
+    if(icon&&icon.textContent==='❤️'){
+      icon.style.transform='scale(1.4)';
+      icon.style.transition='transform 0.2s';
+      setTimeout(function(){icon.style.transform='scale(1)'},200);
+    }
+  });
+});
+</script>
+</body>
+</html>
